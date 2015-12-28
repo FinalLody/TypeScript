@@ -1,7 +1,7 @@
 // @target: es5
 // @module: amd
 namespace A {
-    declare global {
+    global {
         interface Array<T> { x }
     }
 }

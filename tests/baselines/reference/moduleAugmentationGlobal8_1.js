@@ -1,13 +1,13 @@
-//// [moduleAugmentationGlobal8.ts]
+//// [moduleAugmentationGlobal8_1.ts]
 namespace A {
-    declare global {
+    global {
         interface Array<T> { x }
     }
 }
 export {}
 
 
-//// [moduleAugmentationGlobal8.js]
+//// [moduleAugmentationGlobal8_1.js]
 define(["require", "exports"], function (require, exports) {
     "use strict";
 });

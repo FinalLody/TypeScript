@@ -1,5 +1,5 @@
 //// [moduleAugmentationGlobal6.ts]
-global {
+declare global {
     interface Array<T> { x }
 }
 

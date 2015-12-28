@@ -1795,6 +1795,10 @@
         "category": "Error",
         "code": 2666
     },
+    "Augmentations for the global scope should have 'declare' modifier unless they appear in already ambient context.": {
+        "category": "Error",
+        "code": 2667
+    },
     "Import declaration '{0}' is using private name '{1}'.": {
         "category": "Error",
         "code": 4000

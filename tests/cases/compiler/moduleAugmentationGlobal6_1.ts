@@ -1,3 +1,3 @@
-declare global {
+global {
     interface Array<T> { x }
 }

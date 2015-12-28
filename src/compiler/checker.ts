@@ -14132,6 +14132,11 @@ namespace ts {
         function checkModuleDeclaration(node: ModuleDeclaration) {
             if (produceDiagnostics) {
                 // Grammar checking
+                const isGlobalAugmentation = isGlobalScopeAugmentation(node);
+                const inAmbientContext = isInAmbientContext(node);
+                if (isGlobalAugmentation && !inAmbientContext) {
+                    error(node.name, Diagnostics.Augmentations_for_the_global_scope_should_have_declare_modifier_unless_they_appear_in_already_ambient_context);
+                }
                 const isAmbientExternalModule = isAmbientModule(node);
                 const contextErrorMessage = isAmbientExternalModule
                     ? Diagnostics.An_ambient_module_declaration_is_only_allowed_at_the_top_level_in_a_file
@@ -14142,7 +14147,7 @@ namespace ts {
                 }
 
                 if (!checkGrammarDecorators(node) && !checkGrammarModifiers(node)) {
-                    if (!isInAmbientContext(node) && node.name.kind === SyntaxKind.StringLiteral) {
+                    if (!inAmbientContext && node.name.kind === SyntaxKind.StringLiteral) {
                         grammarErrorOnNode(node.name, Diagnostics.Only_ambient_modules_can_use_quoted_names);
                     }
                 }
@@ -14155,7 +14160,7 @@ namespace ts {
                 // The following checks only apply on a non-ambient instantiated module declaration.
                 if (symbol.flags & SymbolFlags.ValueModule
                     && symbol.declarations.length > 1
-                    && !isInAmbientContext(node)
+                    && !inAmbientContext
                     && isInstantiatedModule(node, compilerOptions.preserveConstEnums || compilerOptions.isolatedModules)) {
                     const firstNonAmbientClassOrFunc = getFirstNonAmbientClassOrFunctionDeclaration(symbol);
                     if (firstNonAmbientClassOrFunc) {
@@ -14177,7 +14182,6 @@ namespace ts {
                 }
 
                 if (isAmbientExternalModule) {
-                    const isGlobalAugmentation = isGlobalScopeAugmentation(node);
                     if (isExternalModuleAugmentation(node)) {
                         // if symbol of augmentation is not merged this means that either
                         // - this is an augmentation of the global scope 
@@ -14213,10 +14217,6 @@ namespace ts {
                 }
             }
             checkSourceElement(node.body);
-        }
-
-        function isGlobalScopeAugmentation(module: ModuleDeclaration): boolean {
-            return !!(module.flags & NodeFlags.GlobalAugmentation);
         }
 
         function checkBodyOfModuleAugmentation(node: Node, isGlobalAugmentation: boolean): void {

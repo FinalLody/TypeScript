@@ -1,6 +1,6 @@
 //// [moduleAugmentationGlobal7.ts]
 namespace A {
-    global {
+    declare global {
         interface Array<T> { x }
     }
 }

@@ -802,7 +802,7 @@ namespace ts {
         function writeModuleDeclaration(node: ModuleDeclaration) {
             emitJsDocComments(node);
             emitModuleElementDeclarationFlags(node);
-            if (node.flags & NodeFlags.GlobalAugmentation) {
+            if (isGlobalScopeAugmentation(node)) {
                 write("global ");
             }
             else {
