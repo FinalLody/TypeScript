@@ -14137,6 +14137,7 @@ namespace ts {
                 if (isGlobalAugmentation && !inAmbientContext) {
                     error(node.name, Diagnostics.Augmentations_for_the_global_scope_should_have_declare_modifier_unless_they_appear_in_already_ambient_context);
                 }
+
                 const isAmbientExternalModule = isAmbientModule(node);
                 const contextErrorMessage = isAmbientExternalModule
                     ? Diagnostics.An_ambient_module_declaration_is_only_allowed_at_the_top_level_in_a_file
