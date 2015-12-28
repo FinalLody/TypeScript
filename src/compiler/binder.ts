@@ -193,7 +193,7 @@ namespace ts {
         function getDeclarationName(node: Declaration): string {
             if (node.name) {
                 if (isAmbientModule(node)) {
-                    return node.flags & NodeFlags.GlobalAugmentation ? `::"global"` : `"${(<LiteralExpression>node.name).text}"`;
+                    return node.flags & NodeFlags.GlobalAugmentation ? "__global" : `"${(<LiteralExpression>node.name).text}"`;
                 }
                 if (node.name.kind === SyntaxKind.ComputedPropertyName) {
                     const nameExpression = (<ComputedPropertyName>node.name).expression;

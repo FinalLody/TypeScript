@@ -14208,7 +14208,7 @@ namespace ts {
         }
 
         function isGlobalScopeAugmentation(module: ModuleDeclaration): boolean {
-            return !!(module.flags & NodeFlags.GlobalAugmentation)
+            return !!(module.flags & NodeFlags.GlobalAugmentation);
         }
 
         function checkBodyOfModuleAugmentation(node: Node, isGlobalAugmentation: boolean): void {
