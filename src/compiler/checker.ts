@@ -14142,7 +14142,7 @@ namespace ts {
                 }
 
                 if (!checkGrammarDecorators(node) && !checkGrammarModifiers(node)) {
-                    if (!isInAmbientContext(node) && isAmbientExternalModule) {
+                    if (!isInAmbientContext(node) && node.name.kind === SyntaxKind.StringLiteral) {
                         grammarErrorOnNode(node.name, Diagnostics.Only_ambient_modules_can_use_quoted_names);
                     }
                 }
@@ -14177,30 +14177,38 @@ namespace ts {
                 }
 
                 if (isAmbientExternalModule) {
+                    const isGlobalAugmentation = isGlobalScopeAugmentation(node);
                     if (isExternalModuleAugmentation(node)) {
                         // if symbol of augmentation is not merged this means that either
                         // - this is an augmentation of the global scope 
                         // or
                         // - this augmentation was not merged with main definition of the module
                         //   error should already be reported so all errors in the body of augmentation can be ignored.
-                        const augmentsGlobalScope = isGlobalScopeAugmentation(node);
-                        const checkBody = augmentsGlobalScope || (getSymbolOfNode(node).flags & SymbolFlags.Merged);
+                        const checkBody = isGlobalAugmentation || (getSymbolOfNode(node).flags & SymbolFlags.Merged);
                         if (checkBody) {
                             // body of ambient external module is always a module block
                             for (const statement of (<ModuleBlock>node.body).statements) {
-                                checkBodyOfModuleAugmentation(statement, augmentsGlobalScope);
+                                checkBodyOfModuleAugmentation(statement, isGlobalAugmentation);
                             }
                         }
                     }
                     else if (isGlobalSourceFile(node.parent)) {
-                        if (isExternalModuleNameRelative(node.name.text)) {
+                        if (isGlobalAugmentation) {
+                            error(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
+                        }
+                        else if (isExternalModuleNameRelative(node.name.text)) {
                             error(node.name, Diagnostics.Ambient_module_declaration_cannot_specify_relative_module_name);
                         }
                     }
                     else {
-                        // Node is not an augmentation and is not located on the script level.
-                        // This means that this is declaration of ambient module that is located in other module or namespace which is prohibited.
-                        error(node.name, Diagnostics.Ambient_modules_cannot_be_nested_in_other_modules_or_namespaces);
+                        if (isGlobalAugmentation) {
+                            error(node.name, Diagnostics.Augmentations_for_the_global_scope_can_only_be_directly_nested_in_external_modules_or_ambient_module_declarations);
+                        }
+                        else {
+                            // Node is not an augmentation and is not located on the script level.
+                            // This means that this is declaration of ambient module that is located in other module or namespace which is prohibited.
+                            error(node.name, Diagnostics.Ambient_modules_cannot_be_nested_in_other_modules_or_namespaces);
+                        }
                     }
                 }
             }
